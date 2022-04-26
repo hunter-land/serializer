@@ -54,8 +54,6 @@ public:
 	friend void deserialize(serialIn& serial, int32_t& int32);
 	friend void deserialize(serialIn& serial, uint64_t& uint64);
 	friend void deserialize(serialIn& serial, int64_t& int64);
-	friend void deserialize(serialIn& serial, float& float32);
-	friend void deserialize(serialIn& serial, double& float64);
 
 	//Put more bytes into the internal buffer from the source
 	//Returns actual number of bytes added

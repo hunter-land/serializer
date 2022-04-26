@@ -30,7 +30,7 @@ void serialize(serialOut& serial, std::chrono::time_point<Clock, Duration> point
 void deserialize(serialIn& serial, tm& time);
 
 template <typename Clock, typename Duration>
-void serialize(serialIn& serial, std::chrono::time_point<Clock, Duration>& point) {
+void deserialize(serialIn& serial, std::chrono::time_point<Clock, Duration>& point) {
 	//tm is used at the base, so we must convert from a tm structure into our chrono point
 	//tm is stored in Unix/UTC time, and must be converted to a local time_t
 	//unfortunatley, there is no POSIX inverse of gmtime (or variation), so we must do a bit more work here
@@ -48,7 +48,7 @@ void serialize(serialIn& serial, std::chrono::time_point<Clock, Duration>& point
 	deserialize(serial, timeUnix);
 
 	std::time_t tt = mktime(&timeUnix);
-	tt += timezone;
+	tt -= timezone;
 	auto pointGeneric = Clock::from_time_t(tt);
 	point = pointGeneric;
 }

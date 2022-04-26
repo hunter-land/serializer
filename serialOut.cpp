@@ -85,7 +85,7 @@ serialOut::flushFunction serialOut::flushToFile(std::string outFile) {
 		ofstream->write((const char*)buffer.data(), buffer.size());
 	};
 }
-serialOut::flushFunction flushToVector(std::vector<uint8_t>& outVector) {
+serialOut::flushFunction serialOut::flushToVector(std::vector<uint8_t>& outVector) {
 	return [&outVector](const std::vector<uint8_t>& buffer) {
 		//Append buffer to outVector
 		outVector.insert(outVector.end(), buffer.begin(), buffer.end());

@@ -90,7 +90,7 @@ serialIn::fillFunction serialIn::fillFromFile(std::string inFile) {
 		return buffer;
 	};
 }
-serialIn::fillFunction fillFromVector(std::vector<uint8_t>& inVector) {
+serialIn::fillFunction serialIn::fillFromVector(std::vector<uint8_t>& inVector) {
 
 	return [&inVector](size_t bytesToFill) {
 		//return bytes from inVec
