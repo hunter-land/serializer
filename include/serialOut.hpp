@@ -3,6 +3,7 @@
 #include <vector>
 #include <cstdint>
 #include <string>
+#include "endian.hpp"
 
 //A basic serializer, but with room to grow
 #if __CHAR_BIT__ != 8
@@ -21,28 +22,51 @@ protected:
 	flushFunction m_flushFunction;
 
 	//Helpers
-	void postPush();
+	void postSerialize();
+
+	template<typename T>
+	void serailizeIntegral(T integer) {
+		//Fix endian
+		integer = hostToNetwork(integer);
+
+		//Copy from integral into buffer
+		for (size_t i = 0; i < sizeof(integer); i++) {
+			uint8_t* bytePointer = (uint8_t*)&integer;
+			m_outBuffer.push_back(*(bytePointer + i));
+		}
+
+		//Flush if large enough buffer
+		postSerialize();
+	}
 public:
 	serialOut(flushFunction flusher, size_t flushSize = 0x400);
 	~serialOut();
 
 	//Plain-Old-Data
-	friend void push(serialOut& serial, bool bit);
-	friend void push(serialOut& serial, uint8_t byte);
-	friend void push(serialOut& serial, uint16_t uint16);
-	friend void push(serialOut& serial, uint32_t uint32);
-	friend void push(serialOut& serial, uint64_t uint64);
-	friend void push(serialOut& serial, float float32);
-	friend void push(serialOut& serial, double float64);
+	friend void serialize(serialOut& serial, bool bit);
+	friend void serialize(serialOut& serial, uint8_t uint8);
+	friend void serialize(serialOut& serial, int8_t int8);
+	friend void serialize(serialOut& serial, uint16_t uint16);
+	friend void serialize(serialOut& serial, int16_t int16);
+	friend void serialize(serialOut& serial, uint32_t uint32);
+	friend void serialize(serialOut& serial, int32_t int32);
+	friend void serialize(serialOut& serial, uint64_t uint64);
+	friend void serialize(serialOut& serial, int64_t int64);
+	friend void serialize(serialOut& serial, float float32);
+	friend void serialize(serialOut& serial, double float64);
 
 	//Flush the internal buffer to its destination
 	void flush();
 };
 
-void push(serialOut& serial, bool bit);
-void push(serialOut& serial, uint8_t byte);
-void push(serialOut& serial, uint16_t uint16);
-void push(serialOut& serial, uint32_t uint32);
-void push(serialOut& serial, uint64_t uint64);
-void push(serialOut& serial, float float32);
-void push(serialOut& serial, double float64);
+void serialize(serialOut& serial, bool bit);
+void serialize(serialOut& serial, uint8_t uint8);
+void serialize(serialOut& serial, int8_t int8);
+void serialize(serialOut& serial, uint16_t uint16);
+void serialize(serialOut& serial, int16_t int16);
+void serialize(serialOut& serial, uint32_t uint32);
+void serialize(serialOut& serial, int32_t int32);
+void serialize(serialOut& serial, uint64_t uint64);
+void serialize(serialOut& serial, int64_t int64);
+void serialize(serialOut& serial, float float32);
+void serialize(serialOut& serial, double float64);

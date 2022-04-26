@@ -1,5 +1,6 @@
-#include <algorithm>
-#include <cstdint>
+#pragma once
+#include <algorithm> //std::reverse
+#include <cstdint> //uint8_t
 extern "C" {
 	#include <endian.h>
 }
