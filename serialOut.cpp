@@ -75,6 +75,10 @@ void serialOut::flush() {
 	m_outBuffer.clear();
 }
 
+const std::vector<uint8_t>& serialOut::internalOutBuffer() const {
+	return m_outBuffer;
+}
+
 #include <fstream>
 #include <memory>
 serialOut::flushFunction serialOut::flushToFile(std::string outFile) {

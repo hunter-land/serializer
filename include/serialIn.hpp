@@ -59,6 +59,8 @@ public:
 	//Put more bytes into the internal buffer from the source
 	//Returns actual number of bytes added
 	size_t fill(size_t bytesToRequest);
+
+	const std::vector<uint8_t>& internalInBuffer() const;
 };
 
 void deserialize(serialIn& serial, bool& bit, deserializationLimits limits = defaultDeserializationLimits);

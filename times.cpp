@@ -20,7 +20,7 @@
 	dataByte += byteIndex;
 }*/
 
-void serialize(serialOut& serial, tm time) {
+void serialize(serialOut& serial, const tm& time) {
 	/*tm structure mapping (all integers):
 	| tm_sec   | seconds          [0, 60] | 6  bits |
 	| tm_min   | minutes          [0, 59] | 6  bits |
@@ -52,13 +52,12 @@ void serialize(serialOut& serial, tm time) {
 
 	serialize(serial, (uint8_t)time.tm_wday);
 	serialize(serial, (uint8_t)time.tm_yday);
-	serialize(serial, (bool)time.tm_isdst);
+	serialize(serial, (uint8_t)time.tm_isdst);
 }
 
-void deserialize(serialIn& serial, tm& time) {
+void deserialize(serialIn& serial, tm& time, deserializationLimits limits) {
 	uint8_t byte;
-	uint32_t uint32;
-	bool boolean;
+	int32_t int32;
 
 	deserialize(serial, byte);
 	time.tm_sec = byte;
@@ -71,13 +70,13 @@ void deserialize(serialIn& serial, tm& time) {
 	time.tm_mday = byte;
 	deserialize(serial, byte);
 	time.tm_mon = byte;
-	deserialize(serial, uint32);
-	time.tm_year = uint32;
+	deserialize(serial, int32);
+	time.tm_year = int32;
 
 	deserialize(serial, byte);
 	time.tm_wday = byte;
 	deserialize(serial, byte);
 	time.tm_yday = byte;
-	deserialize(serial, boolean);
-	time.tm_isdst = boolean ? 1 : 0;
+	deserialize(serial, byte);
+	time.tm_isdst = byte;
 }

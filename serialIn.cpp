@@ -1,6 +1,7 @@
 #include "include/serialIn.hpp"
 #include <cstdint>
 #include <limits>
+#include <stdexcept>
 
 serialIn::serialIn(fillFunction filler) {
 	m_fillFunction = filler;
@@ -8,7 +9,10 @@ serialIn::serialIn(fillFunction filler) {
 
 void serialIn::preDeserialize(size_t dataSize) {
 	if (m_inBuffer.size() < dataSize) {
-		fill(dataSize - m_inBuffer.size());
+		size_t added = fill(dataSize - m_inBuffer.size());
+		if (added < dataSize) {
+			throw std::runtime_error("Could not get enough bytes to complete deserialization");
+		}
 	}
 }
 
@@ -20,6 +24,7 @@ void deserialize(serialIn& serial, bool& bit, deserializationLimits limits) {
 
 	//Remove data from buffer and place into the value
 	uint8_t byte = serial.m_inBuffer.front();
+	serial.m_inBuffer.erase(serial.m_inBuffer.begin());
 	bit = byte == 0 ? false : true;
 	//return byte == 0 ? false : true;
 }
@@ -75,6 +80,10 @@ size_t serialIn::fill(size_t bytesToRequest) {
 	std::vector<uint8_t> bytes = m_fillFunction(bytesToRequest);
 	m_inBuffer.insert(m_inBuffer.end(), bytes.begin(), bytes.end());
 	return bytes.size();
+}
+
+const std::vector<uint8_t>& serialIn::internalInBuffer() const {
+	return m_inBuffer;
 }
 
 #include <fstream>

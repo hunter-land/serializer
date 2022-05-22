@@ -55,6 +55,8 @@ public:
 
 	//Flush the internal buffer to its destination
 	void flush();
+
+	const std::vector<uint8_t>& internalOutBuffer() const;
 };
 
 void serialize(serialOut& serial, bool bit);
