@@ -1,6 +1,7 @@
 #pragma once
 #include "serialOut.hpp"
 #include "serialIn.hpp"
+#include "deserialLimits.hpp"
 #include <limits>
 #include <stdexcept>
 //Supported containers
@@ -44,13 +45,13 @@ void serialize(serialOut& serial, const std::vector<T>& vec) {
 }
 
 template<typename T>
-void deserialize(serialIn& serial, std::vector<T>& vec, size_t max = std::numeric_limits<size_t>::max()) {
+void deserialize(serialIn& serial, std::vector<T>& vec, deserializationLimits limits = defaultDeserializationLimits) {
 	//#1: Deserialize size as serialSize_t
 	serialSize_t size;
 	deserialize(serial, size);
 
 	//#1.1: Limit elements to save (if we need to)
-	size_t saveSize = std::min((size_t)size, max); //Only save up to `max` elements, discard the rest
+	size_t saveSize = std::min((size_t)size, limits.max); //Only save up to `max` elements, discard the rest
 
 	//#1.2: Set container size
 	vec.resize(saveSize);
@@ -58,13 +59,13 @@ void deserialize(serialIn& serial, std::vector<T>& vec, size_t max = std::numeri
 	//#2: Deserialize all elements from indexes [0,n)
 	size_t i = 0;
 	for (; i < saveSize; i++) {
-		deserialize(serial, vec[i]);
+		deserialize(serial, vec[i], limits.childLimitOrSelf(0));
 	}
 
 	//#2.1: Pop any remaining elements to keep alignment
 	for (; i < size; i++) {
 		T tmp;
-		deserialize(serial, tmp);
+		deserialize(serial, tmp, deserializationLimits(0));
 	}
 }
 
@@ -73,13 +74,14 @@ void deserialize(serialIn& serial, std::vector<T>& vec, size_t max = std::numeri
  **/
 template<typename T>
 void serialize(serialOut& serial, const std::basic_string<T>& str) {
-	std::vector<T>& vec = str;
+	const std::vector<uint8_t> vec(str.begin(), str.end());
 	serialize(serial, vec);
 }
 template<typename T>
-void deserialize(serialOut& serial, std::basic_string<T>& str) {
-	std::vector<T>& vec = str;
-	deserialize(serial, vec);
+void deserialize(serialIn& serial, std::basic_string<T>& str, deserializationLimits limits = defaultDeserializationLimits) {
+	std::vector<uint8_t> vec(str.begin(), str.end());
+	deserialize(serial, vec, limits);
+	str = std::basic_string<T>(vec.begin(), vec.end());
 }
 
 /*
@@ -109,13 +111,13 @@ void serialize(serialOut& serial, const std::map<T, U>& map) {
 }
 
 template<typename T, typename U>
-void deserialize(serialIn& serial, std::map<T, U>& map, size_t max = std::numeric_limits<size_t>::max()) {
+void deserialize(serialIn& serial, std::map<T, U>& map, deserializationLimits limits = defaultDeserializationLimits) {
 	//#1: Deserialize size as serialSize_t
 	serialSize_t size;
 	deserialize(serial, size);
 
 	//#1.1: Limit elements to save (if we need to)
-	size_t saveSize = std::min((size_t)size, max); //Only save up to `max` elements, discard the rest
+	size_t saveSize = std::min((size_t)size, limits.max); //Only save up to `max` elements, discard the rest
 
 	//#1.1: Clear container
 	map.clear();
@@ -125,8 +127,8 @@ void deserialize(serialIn& serial, std::map<T, U>& map, size_t max = std::numeri
 	for (; i < saveSize; i++) {
 		T key;
 		U value;
-		deserialize(serial, key);
-		deserialize(serial, value);
+		deserialize(serial, key, limits.childLimitOrSelf(0));
+		deserialize(serial, value, limits.childLimitOrSelf(1));
 
 		map[key] = value;
 	}
@@ -135,7 +137,7 @@ void deserialize(serialIn& serial, std::map<T, U>& map, size_t max = std::numeri
 	for (; i < size; i++) {
 		T tmpKey;
 		U tmpValue;
-		deserialize(serial, tmpKey);
-		deserialize(serial, tmpValue);
+		deserialize(serial, tmpKey, deserializationLimits(0));
+		deserialize(serial, tmpValue, deserializationLimits(0));
 	}
 }

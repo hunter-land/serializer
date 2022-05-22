@@ -6,14 +6,14 @@
 #include <system_error>
 
 //NOTE: TODO: These functions are only accurate to 1 second, anything less will be lost and change observed data
-//NOTE: A clock's epoch can be gotten with `std::chrono::time_point<std::chrono::Clock>{}`
 
 void serialize(serialOut& serial, tm time);
 
 template <typename Clock, typename Duration>
 void serialize(serialOut& serial, std::chrono::time_point<Clock, Duration> point) {
-	constexpr bool isSecondsOrMore = ( Duration(1) >= std::chrono::seconds(1) );
-	static_assert(isSecondsOrMore, "Currently only time_points with 1 second or worse accuracy is supported");
+	//constexpr bool isSecondsOrMore = ( Duration(1) >= std::chrono::seconds(1) );
+	//static_assert(isSecondsOrMore, "Currently only time_points with 1 second or worse accuracy is supported");
+
 	//tm struct with UTC zone is desired
 	//tm can be gotten in Unix/UTC from gmtime (or variation)
 	//gmtime needs time_t
@@ -30,14 +30,23 @@ void serialize(serialOut& serial, std::chrono::time_point<Clock, Duration> point
 
 	//We can now serialize timeUnix (tm structure)
 	serialize(serial, timeUnix);
+
+	//Now for getting more accuracy, we have to do some shenanigans. It increases serialize time but it garuntees accuracy, so we do it only when needed
+	//Long processes made short, we convert to less accurate version (second accuracy) and then back as same type, then get the difference in nanoseconds
+	std::time_t ttRedone = mktime(&timeUnix);
+	ttRedone -= timezone;
+	auto pointRedone = std::chrono::time_point_cast<Duration>(Clock::from_time_t(ttRedone)); //pointRedone is the fully re-casted value of our original input, now the heart of the trick
+	std::chrono::nanoseconds nanosecondsThisSecond = point - pointRedone;
+	serialize(serial, nanosecondsThisSecond.count());
 }
 
 void deserialize(serialIn& serial, tm& time);
 
 template <typename Clock, typename Duration>
 void deserialize(serialIn& serial, std::chrono::time_point<Clock, Duration>& point) {
-	constexpr bool isSecondsOrMore = ( Duration(1) >= std::chrono::seconds(1) );
-	static_assert(isSecondsOrMore, "Currently only time_points with 1 second or worse accuracy is supported");
+	//constexpr bool isSecondsOrMore = ( Duration(1) >= std::chrono::seconds(1) );
+	//static_assert(isSecondsOrMore, "Currently only time_points with 1 second or worse accuracy is supported");
+
 	//tm is used at the base, so we must convert from a tm structure into our chrono point
 	//tm is stored in Unix/UTC time, and must be converted to a local time_t
 	//unfortunatley, there is no POSIX inverse of gmtime (or variation), so we must do a bit more work here
@@ -58,4 +67,9 @@ void deserialize(serialIn& serial, std::chrono::time_point<Clock, Duration>& poi
 	tt -= timezone;
 	auto pointGeneric = Clock::from_time_t(tt);
 	point = std::chrono::time_point_cast<Duration>(pointGeneric);
+
+	//Deserialize nanoseconds within the second (nanoseconds % 1 second)
+	uint32_t nanosecondsThisSecond = 0;
+	deserialize(serial, nanosecondsThisSecond);
+	point += std::chrono::nanoseconds(nanosecondsThisSecond);
 }

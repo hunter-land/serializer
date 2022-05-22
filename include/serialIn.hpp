@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <string>
 #include "endian.hpp"
+#include "deserialLimits.hpp"
 
 //A basic serializer, but with room to grow
 #if __CHAR_BIT__ != 8
@@ -45,29 +46,29 @@ public:
 	~serialIn() = default;
 
 	///Plain-Old-Data///
-	friend void deserialize(serialIn& serial, bool& bit);
-	friend void deserialize(serialIn& serial, uint8_t& uint8);
-	friend void deserialize(serialIn& serial, int8_t& int8);
-	friend void deserialize(serialIn& serial, uint16_t& uint16);
-	friend void deserialize(serialIn& serial, int16_t& int16);
-	friend void deserialize(serialIn& serial, uint32_t& uint32);
-	friend void deserialize(serialIn& serial, int32_t& int32);
-	friend void deserialize(serialIn& serial, uint64_t& uint64);
-	friend void deserialize(serialIn& serial, int64_t& int64);
+	friend void deserialize(serialIn& serial, bool& bit, deserializationLimits limits);
+	friend void deserialize(serialIn& serial, uint8_t& uint8, deserializationLimits limits);
+	friend void deserialize(serialIn& serial, int8_t& int8, deserializationLimits limits);
+	friend void deserialize(serialIn& serial, uint16_t& uint16, deserializationLimits limits);
+	friend void deserialize(serialIn& serial, int16_t& int16, deserializationLimits limits);
+	friend void deserialize(serialIn& serial, uint32_t& uint32, deserializationLimits limits);
+	friend void deserialize(serialIn& serial, int32_t& int32, deserializationLimits limits);
+	friend void deserialize(serialIn& serial, uint64_t& uint64, deserializationLimits limits);
+	friend void deserialize(serialIn& serial, int64_t& int64, deserializationLimits limits);
 
 	//Put more bytes into the internal buffer from the source
 	//Returns actual number of bytes added
 	size_t fill(size_t bytesToRequest);
 };
 
-void deserialize(serialIn& serial, bool& bit);
-void deserialize(serialIn& serial, uint8_t& uint8);
-void deserialize(serialIn& serial, int8_t& int8);
-void deserialize(serialIn& serial, uint16_t& uint16);
-void deserialize(serialIn& serial, int16_t& int16);
-void deserialize(serialIn& serial, uint32_t& uint32);
-void deserialize(serialIn& serial, int32_t& int32);
-void deserialize(serialIn& serial, uint64_t& uint64);
-void deserialize(serialIn& serial, int64_t& int64);
-void deserialize(serialIn& serial, float& float32);
-void deserialize(serialIn& serial, double& float64);
+void deserialize(serialIn& serial, bool& bit, deserializationLimits limits = defaultDeserializationLimits);
+void deserialize(serialIn& serial, uint8_t& uint8, deserializationLimits limits = defaultDeserializationLimits);
+void deserialize(serialIn& serial, int8_t& int8, deserializationLimits limits = defaultDeserializationLimits);
+void deserialize(serialIn& serial, uint16_t& uint16, deserializationLimits limits = defaultDeserializationLimits);
+void deserialize(serialIn& serial, int16_t& int16, deserializationLimits limits = defaultDeserializationLimits);
+void deserialize(serialIn& serial, uint32_t& uint32, deserializationLimits limits = defaultDeserializationLimits);
+void deserialize(serialIn& serial, int32_t& int32, deserializationLimits limits = defaultDeserializationLimits);
+void deserialize(serialIn& serial, uint64_t& uint64, deserializationLimits limits = defaultDeserializationLimits);
+void deserialize(serialIn& serial, int64_t& int64, deserializationLimits limits = defaultDeserializationLimits);
+void deserialize(serialIn& serial, float& float32, deserializationLimits limits = defaultDeserializationLimits);
+void deserialize(serialIn& serial, double& float64, deserializationLimits limits = defaultDeserializationLimits);

@@ -52,8 +52,6 @@ public:
 	friend void serialize(serialOut& serial, int32_t int32);
 	friend void serialize(serialOut& serial, uint64_t uint64);
 	friend void serialize(serialOut& serial, int64_t int64);
-	friend void serialize(serialOut& serial, float float32);
-	friend void serialize(serialOut& serial, double float64);
 
 	//Flush the internal buffer to its destination
 	void flush();

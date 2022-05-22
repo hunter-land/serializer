@@ -12,7 +12,7 @@ void serialIn::preDeserialize(size_t dataSize) {
 	}
 }
 
-void deserialize(serialIn& serial, bool& bit) {
+void deserialize(serialIn& serial, bool& bit, deserializationLimits limits) {
 	size_t valueWidth = sizeof(bool);
 
 	//Make sure we have the number of bytes we need
@@ -24,32 +24,32 @@ void deserialize(serialIn& serial, bool& bit) {
 	//return byte == 0 ? false : true;
 }
 
-void deserialize(serialIn& serial, uint8_t& uint8) {
+void deserialize(serialIn& serial, uint8_t& uint8, deserializationLimits limits) {
 	serial.deserailizeIntegral(uint8);
 }
-void deserialize(serialIn& serial, int8_t& int8) {
+void deserialize(serialIn& serial, int8_t& int8, deserializationLimits limits) {
 	serial.deserailizeIntegral(int8);
 }
-void deserialize(serialIn& serial, uint16_t& uint16) {
+void deserialize(serialIn& serial, uint16_t& uint16, deserializationLimits limits) {
 	serial.deserailizeIntegral(uint16);
 }
-void deserialize(serialIn& serial, int16_t& int16) {
+void deserialize(serialIn& serial, int16_t& int16, deserializationLimits limits) {
 	serial.deserailizeIntegral(int16);
 }
-void deserialize(serialIn& serial, uint32_t& uint32) {
+void deserialize(serialIn& serial, uint32_t& uint32, deserializationLimits limits) {
 	serial.deserailizeIntegral(uint32);
 }
-void deserialize(serialIn& serial, int32_t& int32) {
+void deserialize(serialIn& serial, int32_t& int32, deserializationLimits limits) {
 	serial.deserailizeIntegral(int32);
 }
-void deserialize(serialIn& serial, uint64_t& uint64) {
+void deserialize(serialIn& serial, uint64_t& uint64, deserializationLimits limits) {
 	serial.deserailizeIntegral(uint64);
 }
-void deserialize(serialIn& serial, int64_t& int64) {
+void deserialize(serialIn& serial, int64_t& int64, deserializationLimits limits) {
 	serial.deserailizeIntegral(int64);
 }
 
-void deserialize(serialIn& serial, float& float32) {
+void deserialize(serialIn& serial, float& float32, deserializationLimits limits) {
 	//We expect floats of IEEE-754/IEC60559 definition with 2 radix and 32-bits long
 	constexpr bool isIEEE754 = std::numeric_limits<float>::is_iec559 && std::numeric_limits<float>::radix == 2 && sizeof(float) == 4;
 	static_assert(isIEEE754, "System is not using IEEE754 floating points of 32 bits");
@@ -60,7 +60,7 @@ void deserialize(serialIn& serial, float& float32) {
 	float32 = *(float*)&intFloat;
 }
 
-void deserialize(serialIn& serial, double& float64) {
+void deserialize(serialIn& serial, double& float64, deserializationLimits limits) {
 	//We expect floats of IEEE-754/IEC60559 definition with 2 radix and 64-bits long
 	constexpr bool isIEEE754 = std::numeric_limits<double>::is_iec559 && std::numeric_limits<double>::radix == 2 && sizeof(double) == 8;
 	static_assert(isIEEE754, "System is not using IEEE754 (double) floating points of 64 bits");
