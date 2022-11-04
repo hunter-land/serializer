@@ -13,8 +13,8 @@ serialOut::~serialOut() {
 
 void serialOut::postSerialize() {
 	if (m_outBuffer.size() >= m_flushSize) {
-		//Flush buffer out
-		m_flushFunction(m_outBuffer);
+		//Flush buffer out automatically once it hits (or goes above) limit
+		flush();
 	}
 }
 
@@ -72,11 +72,18 @@ void serialize(serialOut& serial, double float64) {
 
 void serialOut::flush() {
 	m_flushFunction(m_outBuffer);
+	m_bytesFlushedCounter += m_outBuffer.size();
 	m_outBuffer.clear();
 }
 
 const std::vector<uint8_t>& serialOut::internalOutBuffer() const {
 	return m_outBuffer;
+}
+size_t serialOut::outCounter() const {
+	return m_bytesFlushedCounter;
+}
+void serialOut::resetOutCounter() {
+	m_bytesFlushedCounter = 0;
 }
 
 #include <fstream>

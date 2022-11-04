@@ -20,6 +20,7 @@ protected:
 
 	size_t m_flushSize; //Once the vector is this size or greater, flush it
 	flushFunction m_flushFunction;
+	size_t m_bytesFlushedCounter = 0; //For use outside of the class. Track how many bytes we have flushed (only increment automatically)
 
 	//Helpers
 	void postSerialize();
@@ -57,6 +58,8 @@ public:
 	void flush();
 
 	const std::vector<uint8_t>& internalOutBuffer() const;
+	size_t outCounter() const;
+	void resetOutCounter();
 };
 
 void serialize(serialOut& serial, bool bit);

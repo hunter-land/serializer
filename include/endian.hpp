@@ -33,3 +33,7 @@ T networkToHost(T data) {
 	//This is a seperate function for readability where it is used
 	return hostToNetwork(data);
 }
+
+void hostToNetwork(void* data, size_t len);
+
+void networkToHost(void* data, size_t len);

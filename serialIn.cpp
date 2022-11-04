@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <limits>
 #include <stdexcept>
+#include <cstring> //std::memset
 
 serialIn::serialIn(fillFunction filler) {
 	m_fillFunction = filler;
@@ -10,7 +11,7 @@ serialIn::serialIn(fillFunction filler) {
 void serialIn::preDeserialize(size_t dataSize) {
 	if (m_inBuffer.size() < dataSize) {
 		size_t added = fill(dataSize - m_inBuffer.size());
-		if (added < dataSize) {
+		if (m_inBuffer.size() < dataSize) {
 			throw std::runtime_error("Could not get enough bytes to complete deserialization");
 		}
 	}
@@ -79,11 +80,18 @@ void deserialize(serialIn& serial, double& float64, deserializationLimits limits
 size_t serialIn::fill(size_t bytesToRequest) {
 	std::vector<uint8_t> bytes = m_fillFunction(bytesToRequest);
 	m_inBuffer.insert(m_inBuffer.end(), bytes.begin(), bytes.end());
+	m_bytesFilledCounter += bytes.size();
 	return bytes.size();
 }
 
 const std::vector<uint8_t>& serialIn::internalInBuffer() const {
 	return m_inBuffer;
+}
+size_t serialIn::inCounter() const {
+	return m_bytesFilledCounter;
+}
+void serialIn::resetInCounter() {
+	m_bytesFilledCounter = 0;
 }
 
 #include <fstream>

@@ -20,6 +20,7 @@ protected:
 	std::vector<uint8_t> m_inBuffer;
 
 	fillFunction m_fillFunction;
+	size_t m_bytesFilledCounter = 0; //For use outside of the class. Track how many bytes we have filled (only increment automatically)
 
 	//Helpers
 	void preDeserialize(size_t dataSize);
@@ -61,6 +62,8 @@ public:
 	size_t fill(size_t bytesToRequest);
 
 	const std::vector<uint8_t>& internalInBuffer() const;
+	size_t inCounter() const;
+	void resetInCounter();
 };
 
 void deserialize(serialIn& serial, bool& bit, deserializationLimits limits = defaultDeserializationLimits);
