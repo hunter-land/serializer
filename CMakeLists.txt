@@ -14,8 +14,8 @@ option(BUILD_SHARED_LIBS "Build using shared libraries" ON)
 option(CMAKE_BUILD_TYPE "Build type" Release)
 
 #Source files:
-set(SOURCE_FILES "${SOURCE_DIR}/serialOut.cpp"  "${SOURCE_DIR}/serialIn.cpp"  "${SOURCE_DIR}/serializer.cpp"                                      "${SOURCE_DIR}/times.cpp"                                  "${SOURCE_DIR}/endian.cpp")
-set(HEADER_FILES "${INCLUDE_DIR}/serialOut.hpp" "${INCLUDE_DIR}/serialIn.hpp" "${INCLUDE_DIR}/serializer.hpp" "${INCLUDE_DIR}/deserialLimits.hpp" "${INCLUDE_DIR}/times.hpp" "${INCLUDE_DIR}/containers.hpp" "${INCLUDE_DIR}/endian.hpp")
+set(SOURCE_FILES "${SOURCE_DIR}/serialOut.cpp"  "${SOURCE_DIR}/serialIn.cpp"  "${SOURCE_DIR}/serializer.cpp"                                      "${SOURCE_DIR}/times.cpp"                                     "${SOURCE_DIR}/endian.cpp")
+set(HEADER_FILES "${INCLUDE_DIR}/serialOut.hpp" "${INCLUDE_DIR}/serialIn.hpp" "${INCLUDE_DIR}/serializer.hpp" "${INCLUDE_DIR}/deserialLimits.hpp" "${INCLUDE_DIR}/times.hpp" "${INCLUDE_DIR}/containers.hpp" "${INCLUDE_DIR}/special.hpp" "${INCLUDE_DIR}/endian.hpp")
 
 add_library(serializer ${SOURCE_FILES})
 # Set target properties for version and the related (public) headers
